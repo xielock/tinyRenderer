@@ -1,53 +1,29 @@
 #include<vector>
-#include<cmath>
+#include <iostream>
+
 #include"tgaImage.h"
 #include"model.h"
 #include"geometry.h"
-#include <iostream>
+#include"our_gl.h"
 
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red = TGAColor(255, 0, 0, 255);
-const TGAColor green = TGAColor(0, 255, 0, 255);
+
+
 Model* model = NULL;
-TGAImage textureImage;
 const int width = 800;
 const int height = 800;
-const int depth = 255;
 
 Vec3f light_dir(0, 0, -1);
 Vec3f center(0, 0, 0);
 Vec3f eye(1, 1, 3);
+Vec3f up(0, 1, 0);
 
-void line(int x0, int y0, int x1, int y1, TGAImage& image, TGAColor color)
-{
-	bool steep = false;
-	if (abs(x0 - x1) < abs(y0 - y1))
+struct GourauShader: public IShader{
+	Vec3f varying_intensity;
+	virtual Vec3f vertex(int iface, int nthvert)
 	{
-		std::swap(x0, y0);
-		std::swap(x1, y1);
-		steep = true;
-	}
-	if (x0 > x1)
-	{
-		std::swap(x0, x1);
-		std::swap(y0, y1);
+
 	}
 
-	for (int x = x0; x <= x1; x++)
-	{
-		float t = (x - x0) / (float)(x1 - x0);
-		//int y = y0 * (1. - t) + y1 * t;
-		int y = y0 + (y0 - y1) * t;
-		if (steep)
-		{
-			image.set(y, x, color);
-		}
-		else
-		{
-			image.set(x, y, color);
-		}
-	}
-}
 void triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage& image, TGAColor color)
 {
 	if (t0.y == t1.y && t0.y == t2.y) return;
@@ -206,28 +182,6 @@ int main(int argc, char** argv)
 	int textureHeight = textureImage.get_height();
 	
 
-	//raster  
-	//for (int i = 0; i < model->nfaces(); i++)
-	//{
-	//	std::vector<int> face = model->face(i);
-	//	Vec2i screen_coords[3];
-	//	Vec3f world_coords[3];
-	//	for (int j = 0; j < 3; j++)
-	//	{
-	//		Vec3f v = model->vert(face[j]);//每个面有三个顶点，依次取出顶点
-	//		screen_coords[j] = Vec2i((v.x + 1.) * width / 2., (v.y + 1.) * height / 2.);
-	//		world_coords[j] = v;
-	//	}
-	//	//面法线方向
-	//	Vec3f n = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]);
-	//	n.normalize();
-	//	float intensity = n * light_dir;
-	//	if (intensity > 0)  //back-face culling
-	//	{
-	//		triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
-	//	}
-	//}
-	//z 方向计算buffer 再raster
 	float* zbuffer = new float[width * height];
 
 	Matrix ModelView = lookat(eye, center, Vec3f(0, 1, 0));// up direction
