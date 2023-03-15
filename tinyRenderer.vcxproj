@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="geometry.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="our_gl.h" />
     <ClInclude Include="tgaImage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
