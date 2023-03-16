@@ -92,3 +92,5 @@ void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer)
 			}
 		}
 }
+
+//our_gl is the rasterization function
