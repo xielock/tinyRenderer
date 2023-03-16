@@ -130,6 +130,7 @@
     <ClCompile Include="geometry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="our_gl.cpp" />
     <ClCompile Include="tgaImage.cpp" />
   </ItemGroup>
   <ItemGroup>
