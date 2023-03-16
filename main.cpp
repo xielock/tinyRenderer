@@ -17,9 +17,11 @@ Vec3f up(0, 1, 0);
 
 struct GourauShader : public IShader {
 	Vec3f varying_intensity;
+	mat<2, 3, float> varying_uv; // triangle uv coordinates
 	virtual Vec4f vertex(int iface, int nthvert)
 	{
 		varying_intensity[nthvert] = std::max(0.f, model->normal(iface, nthvert) * light_dir);
+		varying_uv.set_col(nthvert, model->uv(iface, nthvert));
 		//the function of embed<4> is to add a 1 to the end of the vector, so that the vector can be multiplied by the matrix
 		Vec4f gl_Vertex = embed<4>(model->vert(iface, nthvert)); 
 		return viewPort * projection * modelView * gl_Vertex;
@@ -27,7 +29,8 @@ struct GourauShader : public IShader {
 	virtual bool fragment(Vec3f barycen, TGAColor& color)
 	{
 		float intensity = varying_intensity * barycen;
-		color = TGAColor(255, 255, 255) * intensity;
+		Vec2f uv = varying_uv * barycen; //通过三个顶点的坐标插值得到的坐标
+		color = model->diffuse(uv) * intensity;
 		return false;
 	}
 };
@@ -58,11 +61,13 @@ int main(int argc, char** argv)
 		for (int j = 0; j < 3; j++)
 		{
 			screen_coords[j] = shader.vertex(i, j);
-			//std::cout << screen_coords[j][0] << "," << screen_coords[j][1] << "," << screen_coords[j][2] << "," << screen_coords[j][3] << std::endl;
 		}
 		triangle(screen_coords, shader, image, zbuffer);
 	}
-	image.write_tga_file("output6.tga");
+	image.write_tga_file("output/output7.tga");
 	delete model;
 	return 0;
 }
+
+
+//main funciton is the shader program
