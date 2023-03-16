@@ -2,7 +2,7 @@
 #include"tgaImage.h"
 #include"geometry.h"
 
-extern Matrix modelView;
+extern Matrix modelView;  //外部声明，允许extern 到其他cpp文件
 extern Matrix viewPort;
 extern Matrix projection;
 
@@ -12,8 +12,8 @@ void LookAt(Vec3f eye, Vec3f center, Vec3f up);
 
 struct IShader {
 	virtual ~IShader();
-	virtual Vec3f vertex(int iface, int nthvert) = 0;
+	virtual Vec4f vertex(int iface, int nthvert) = 0;
 	virtual bool fragment(Vec3f bar, TGAColor& color) = 0;
 };
 
-void triangle(Vec3f * pts, IShader& shader, TGAImage& image, float* zbuffer);
+void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer);
