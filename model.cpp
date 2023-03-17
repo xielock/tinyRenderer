@@ -108,6 +108,7 @@ void Model::load_texture(std::string filename, const char* suffix, TGAImage& img
 }
 TGAColor Model::diffuse(Vec2f uv)
 {
+    //uv 还是0.几的数字哦
 	Vec2i uv1(uv[0] * diffusemap_.get_width(), uv[1] * diffusemap_.get_height());
 	return diffusemap_.get(uv1[0], uv1[1]);
 }
