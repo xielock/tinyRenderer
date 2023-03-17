@@ -14,7 +14,7 @@ Model* model = NULL;
 const int width = 800;
 const int height = 800;
 
-Vec3f light_dir(1, 1, 1);
+Vec3f light_dir(1, 1, 3);
 Vec3f center(0, 0, 0);
 Vec3f eye(1, 1, 3);
 Vec3f up(0, 1, 0);
@@ -53,32 +53,32 @@ struct GourauShader : public IShader {
 	}
 };
 
-struct PhongShader : public IShader {
+struct PhongShader : public IShader {  
 	mat<2, 3, float> varying_uv;
 	mat<3, 3, float> varying_nrm;
 	mat<4, 3, float> varying_tri;
 	mat<3, 3, float> ndc_tri;
-	
+	//Darboux basis
 	virtual Vec4f vertex(int iface, int nthvert)
 	{
 		varying_uv.set_col(nthvert, model->uv(iface, nthvert));
-		varying_nrm.set_col(nthvert, proj<3>((projection * modelView).invert_transpose()* embed<4>(model->normal(iface, nthvert), 0.f)));
+		varying_nrm.set_col(nthvert, proj<3>((projection * modelView).invert_transpose() * embed<4>(model->normal(iface, nthvert), 0.f)));
 		Vec4f gl_Vertex = projection * modelView * embed<4>(model->vert(iface, nthvert));
-		varying_tri.set_col(nthvert, viewPort* gl_Vertex);
+		varying_tri.set_col(nthvert, gl_Vertex);
 		ndc_tri.set_col(nthvert, proj<3>(gl_Vertex / gl_Vertex[3]));
-		return viewPort * gl_Vertex;
-		
+		return gl_Vertex;
 	}
 	virtual bool fragment(Vec3f barc, TGAColor& color)
 	{
 		Vec3f bn = (varying_nrm * barc).normalize();
 		Vec2f uv = varying_uv * barc;
+
 		mat<3, 3, float> A;
 		A[0] = ndc_tri.col(1) - ndc_tri.col(0);
 		A[1] = ndc_tri.col(2) - ndc_tri.col(0);
 		A[2] = bn;
 
-		mat<3, 3, float> AI = A.invert_transpose();
+		mat<3, 3, float> AI = A.invert();
 
 		Vec3f i = AI * Vec3f(varying_uv[0][1] - varying_uv[0][0], varying_uv[0][2] - varying_uv[0][0], 0);
 		Vec3f j = AI * Vec3f(varying_uv[1][1] - varying_uv[1][0], varying_uv[1][2] - varying_uv[1][0], 0);
@@ -89,9 +89,11 @@ struct PhongShader : public IShader {
 		B.set_col(2, bn);
 
 		Vec3f n = (B * model->normal(uv)).normalize();
-		//float diff = std::max(0.f, bn* light_dir); //phong shading
+
 		float diff = std::max(0.f, n * light_dir);
+		//float diff = std::max(0.f, bn* light_dir);
 		color = model->diffuse(uv) * diff;
+
 		return false;
 	}
 };
@@ -122,10 +124,11 @@ int main(int argc, char** argv)
 		Vec4f screen_coords[3]; //3¸ö¶¥µã
 		for (int j = 0; j < 3; j++)
 		{
-			screen_coords[j] = shader.vertex(i, j);
+			screen_coords[j] =  viewPort * shader.vertex(i, j);
 		}
 		triangle(screen_coords, shader, image, zbuffer);
 	}
+	image.flip_horizontally();
 	image.write_tga_file("output/output9.tga");
 	delete model;
 	return 0;
