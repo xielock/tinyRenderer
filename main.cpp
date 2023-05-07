@@ -54,7 +54,7 @@ struct GourauShader : public IShader {
 		return false;
 	}
 };
-
+//test 11
 struct PhongShader : public IShader {  
 	mat<2, 3, float> varying_uv;
 	mat<3, 3, float> varying_nrm;
@@ -210,6 +210,7 @@ int main(int argc, char** argv)
 		shader.uniform_M = projection * modelView;
 		shader.uniform_MIT = (projection * modelView).transpose();
 		shader.uniform_Mshadow = M * (viewPort * projection * modelView).invert(); // tail to transform frame buffer to object, and front transform object to shadow buffer
+		//here build the relationship between frame buffer and shadow buffer//// frame screen -> shadow screen
 		Vec4f screen_coords[3];
 		for (int i = 0; i < model->nfaces(); i++) {
 			for (int j = 0; j < 3; j++) {
@@ -224,6 +225,7 @@ int main(int argc, char** argv)
 	delete model;
 	return 0;
 }
-
+//nothing
+//test 
 
 //main funciton is the shader program
