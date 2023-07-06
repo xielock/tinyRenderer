@@ -2,14 +2,14 @@
 #include<limits>
 #include<cstdlib>
 #include"our_gl.h"
-
+///temp
 Matrix modelView;
 Matrix viewPort;
 Matrix projection;
 
 IShader::~IShader() {}
 
-//ÊÓ¿Ú
+//æŸ¬ì™¯
 void ViewPort(int x, int y, int w, int h)
 {
 	viewPort = Matrix::identity();
@@ -20,13 +20,13 @@ void ViewPort(int x, int y, int w, int h)
 	viewPort[1][1] = h / 2.f;
 	viewPort[2][2] = 255.f / 2.f;
 }
-//Í¸ÊÓÍ¶Ó°
+//æ‹·æŸ¬å°»ç·
 void Projection(float coeff)
 {
 	projection = Matrix::identity();
 	projection[3][2] = coeff;
 }
-//Model View±ä»»
+//Model Viewê¸´ë»£
 void LookAt(Vec3f eye, Vec3f center, Vec3f up)
 {
 	Vec3f z = (eye - center).normalize();
@@ -41,7 +41,7 @@ void LookAt(Vec3f eye, Vec3f center, Vec3f up)
 		modelView[i][3] = -center[i];
 	}
 }
-//ÖØĞÄ×ø±ê barycentric
+//è·¯æ‡ƒéºŸê¹ƒ barycentric
 Vec3f barycentric(Vec2f A, Vec2f B, Vec2f C, Vec2f P)
 {
 	Vec3f s[2];
@@ -58,7 +58,7 @@ Vec3f barycentric(Vec2f A, Vec2f B, Vec2f C, Vec2f P)
 	return Vec3f(-1, 1, 1); // in this case generate negative coordinates, it will be thrown away by the rasterizator
 }
 
-//»æÖÆÈı½ÇĞÎ
+//ì‚¥é½¡í›ì‹¤è¿‘
 void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer)
 {
 	Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -72,7 +72,7 @@ void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer)
 		}
 	}
 	Vec2i P;
-	TGAColor color; //±éÀú°üÎ§ºĞ
+	TGAColor color; //ê¹ì €ê´€é‹ë¶„
 	for(P.x = bboxmin.x; P.x <= bboxmax.x; P.x ++)
 		for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++)
 		{
